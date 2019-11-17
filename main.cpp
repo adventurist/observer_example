@@ -36,13 +36,15 @@ class SpecialData : public Subject {
         m_name(std::string{"Datapoint-" + std::to_string(data_index)}) {}
 
   void registerObserver(std::shared_ptr<Observer> o) {
-    std::cout << name() << " is registering observer" << o->name() << std::endl;
+    std::cout << "\n"
+              << name() << " is registering observer" << o->name() << std::endl;
     m_observers.push_back(o);
   }
   void unregisterObserver(std::shared_ptr<Observer> o) {
     for (auto it = m_observers.begin(); it != m_observers.end(); it++) {
       if (*it == o) {
-        std::cout << o->name() << " is being unregistered from " << name()
+        std::cout << "\n"
+                  << o->name() << " is being unregistered from " << name()
                   << std::endl;
         m_observers.erase(it);
         break;
@@ -59,7 +61,9 @@ class SpecialData : public Subject {
     int old = m_current_value;
     m_current_value = get_random();
     if (m_current_value != old) {
-      std::cout << name() << " has updated its responsible value." << std::endl;
+      std::cout << "\n"
+                << name() << " has updated its responsible value.\n"
+                << std::endl;
       notifyObservers();
     }
   }
@@ -76,7 +80,7 @@ class Display : public Observer {
  public:
   Display() : m_name({"Observer-" + std::to_string(observer_index)}) {}
   void display() {
-    std::cout << name() << " observed value: " << m_value << "\n" << std::endl;
+    std::cout << name() << " observed value: " << m_value << std::endl;
   }
   void update(int value) {
     m_value = value;
@@ -91,8 +95,6 @@ class Display : public Observer {
 };
 
 int main(int argc, char** argv) {
-  SpecialData s_data = *(new SpecialData());
-  data_index++;
   std::shared_ptr<Display> s_ptr_display = std::make_shared<Display>();
   observer_index++;
   std::shared_ptr<Display> s_ptr_display2 = std::make_shared<Display>();
@@ -100,40 +102,51 @@ int main(int argc, char** argv) {
   std::shared_ptr<Display> s_ptr_display3 = std::make_shared<Display>();
   observer_index++;
 
+  SpecialData s_data = *(new SpecialData());
+  data_index++;
   s_data.registerObserver(s_ptr_display);
   s_data.registerObserver(s_ptr_display2);
   s_data.registerObserver(s_ptr_display3);
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
   SpecialData s_data2 = *(new SpecialData());
   data_index++;
   s_data2.registerObserver(s_ptr_display);
   s_data2.registerObserver(s_ptr_display2);
   s_data2.registerObserver(s_ptr_display3);
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
   SpecialData s_data3 = *(new SpecialData());
   data_index++;
   s_data3.registerObserver(s_ptr_display);
   s_data3.registerObserver(s_ptr_display2);
   s_data3.registerObserver(s_ptr_display3);
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
   s_data.work();
   s_data2.work();
   s_data3.work();
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
   s_data.work();
   s_data2.work();
   s_data3.work();
   std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
   s_data.work();
   s_data2.work();
   s_data3.work();
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
   s_data.unregisterObserver(s_ptr_display);
   s_data.unregisterObserver(s_ptr_display2);
   s_data.unregisterObserver(s_ptr_display3);
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
   s_data2.unregisterObserver(s_ptr_display);
   s_data2.unregisterObserver(s_ptr_display2);
   s_data2.unregisterObserver(s_ptr_display3);
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
   s_data3.unregisterObserver(s_ptr_display);
   s_data3.unregisterObserver(s_ptr_display2);
